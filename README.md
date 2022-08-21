@@ -1,10 +1,7 @@
-# avaliacao_risco_credito
-Modelo de Machine Learning que prevê se o crédito deve ser ou não concedido.
-
-<h1 align="middle">Prevendo Despesas Médicas 👩‍⚕️️🏥</h1>
+<h1 align="middle">Prevendo se o crédito deve ser ou não concedido. </h1>
 
 <p align="center">
-  <img src="Imagens/IMG22.jpg">
+  <img src="Imagens/IMG01.jpg">
 </p>
 
 # Índice
@@ -23,32 +20,25 @@ Modelo de Machine Learning que prevê se o crédito deve ser ou não concedido.
 * [Autor](#superhero-autor)
 
 ## :computer: Sobre o Projeto
-<td><p align=justify>O objetivo deste projeto é praticar o conhecimento adquirido em Machine Learning. Neste projeto foi construído um Modelo Preditivo baseado em Regressão Linear para prever gastos médicos. Para o desenvolvimento do projeto foi utilizada linguagem R (versão 4.2.0) juntamente com as bibliotecas 'dplyr' (versão 1.0.9), 'ggplot2' (versão 3.3.6), 'corrplot' (versão 0.92) e 'caTools' (versão 1.18.2).</p></td>
+<td><p align=justify>O objetivo deste projeto é praticar o conhecimento adquirido em Machine Learning. Neste projeto foram construídos dois Modelos Preditivos de classificação (Random Forest e Regressão Logística) para prever se o crédito deve ser ou não concedido a determinado cliente de uma instituição financeira, dadas algumas características conhecidas. Para o desenvolvimento do projeto foi utilizada linguagem R (versão 4.2.0) juntamente com as bibliotecas 'ROCR' (versão 1.0-11), 'pROC' (versão 1.18.0), 'caret' (versão 6.0-92), 'randomForest' (versão 4.7-1.1) e 'RSBID' (versão 0.0.2.0000).</p></td>
 
 ## :gear: Descrição Geral do Problema
-<td><p align=justify>Para que uma companhia de seguros de saúde possa auferir lucros, ela precisa recolher mais
-prêmios anuais do que gasta em cuidados médicos para os seus beneficiários. Como resultado,
-as seguradoras investem no desenvolvimento de modelos que possam prever com precisão as 
-despesas médicas para a população segurada. As despesas médicas são difíceis de estimar, 
-porque os tratamentos mais caros são raros e, aparentemente, ocorrem de maneira aleatória. 
-Ainda assim, algumas condições são mais comuns em certos segmentos da população. Por exemplo, 
-o câncer de pulmão é mais provável entre fumantes do que não-fumantes e doenças cardíacas podem 
-ser mais prováveis entre os obesos. O objetivo deste projeto é usar os dados de pacientes para estimar 
-as despesas médias de assistência médica a esses segmentos da população. Estas estimativas podem ser utilizadas
-para criar tabelas que estabelecem os preços dos prêmios anuais maiores ou menores, dependendo dos custos de tratamento previsto.</p></td>
+<td><p align=justify>Como forma de reduzir o risco na concessão de crédito, os bancos e instituições financeiras estão sempre gerando melhorias em seus processos de
+análise de crédito, nesse sentindo, entendemos como necessária a construção de modelos preditivos capazes de avaliar se um cliente conseguirá ou não pagar por um crédito concedido.</p></td>
 
 ## :mag: Familiarizando-se com o Dataset
-<td><p align=justify>Para o desenvolvimento do Projeto foram utilizados dados fictícios de 1338 segurados, considerando as seguintes caracterísicas: idade, sexo, 
-índice de massa corporal (bmi), número de filhos, se é fumante ou não, e o total anual gasto com despesas médicas. Trabalharemos inicialmente com a hipótese de que algumas caractéricas dos segurados, como ser fumante e/ou possuir um alto índice de massa corporal estão diretamente vinculadas aos gastos anuais com saúde.</p></td>
+<td><p align=justify>Para o desenvolvimento do Projeto foram utilizados dados fictícios de 1000 clientes de uma instituição financeira, considerando as seguintes caracterísicas: classificação de crédito, saldo da conta, meses de duração do crédito, status de pagamento de crédito anterior, finalidade do crédito, quantia do crédito, poupança, duração do emprego, taxa de parcelamento, estado civil, fiador, duração da residência, ativo circulante, idade, outros créditos, tipo de apartamento, créditos bancários, ocupação, dependentes, telefone, trabalhador estrangeiro.</p></td>
 
 ### Carregando bibliotecas e dataset
 ```
-library(ggplot2)
-library(corrplot)
-library(caTools)
+library(RSBID)
+library(randomForest)
+library(ROCR)
+library(pROC)
+library(caret)
 ```
 ```
-df <- read.csv("despesas_medicas.csv")
+df <- read.csv("credito.csv")
 ```
 
 ### Exploração inicial dos dados
