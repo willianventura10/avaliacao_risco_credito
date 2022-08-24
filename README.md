@@ -46,51 +46,69 @@ df <- read.csv("credito.csv")
 <i>Primeiras linhas do 'dataset'</i>
 </p>
 <p align="center">
-  <img src="Imagens/IMG22_.jpg">
+  <img src="Imagens/IMG02_.jpg">
 </p>
-<p align="center">
-<i>Histograma da variável 'gastos'</i>
-</p>
-<p align="center">
-  <img src="Imagens/IMG21.jpg" width="600" height="300">
-</p>
+
 <p align="center">
 <i>Resumo estatístico</i>
 </p>
 <p align="center">
-  <img src="Imagens/IMG3.jpg" width="600" height="250">
+  <img src="Imagens/IMG03_.jpg" >
+</p>
+
+<p align="center">
+<i>Histograma das variáveis "credit.amount" e "age" </i>
+</p>
+<p align="center">
+  <img src="Imagens/IMG04.jpg">
 </p>
 
 ### Pré-Processamento
 
-Substituindo 'sim' e 'nao' por 1 e 0 respectivamente na coluna 'fumante'.
+Transformando todas as variáveis numéricas em categóricas (exceto "credit.duration.months", "credit.amount" e "age")
 ```
-df$fumante = ifelse(df$fumante == "sim",1,0)
-df$fumante = as.numeric(df$fumante)
+for (i in colnames(df,do.NULL = FALSE,prefix = "col")){
+  if(i!="credit.duration.months"&i!="credit.amount"&i!="age")
+  df[,i] <- as.factor(df[,i])
+}
 ```
-Obtendo e filtrando apenas as colunas numéricas para análise de correlacão.
+Normalizando (padronizando) as variáveis "credit.duration.months", "credit.amount" e "age" 
 ```
-colunas_numericas <- sapply(df, is.numeric)
-data_cor <- cor(df[,colunas_numericas])
+scale.features <- function(df, variables){
+  for (variable in variables){
+    df[[variable]] <- scale(df[[variable]], center=T, scale=T)
+  }
+  return(df)
+}
+numeric.vars <- c("credit.duration.months", "age", "credit.amount")
+df <- scale.features(df, numeric.vars)
 ```
-### Análise da Correlação entre as variáveis 
+Split dos dados (60% para dados de treino e 40% para dados de teste)
+```
+indexes <- sample(1:nrow(df), size = 0.6 * nrow(df))
+df_train <- df[indexes,]
+df_test <- df[-indexes,]
+```
+### Tabela de Contingência e Balanceamento dos dados de treino 
 
 <p align="center">
-<i>Matriz de Correlação</i>
+<i>Histograma variável "credit.rating antes do balanceamento</i>
 </p>
 <p align="center">
-  <img src="Imagens/IMG5.jpeg" width="500" height="130">
+  <img src="Imagens/IMG05.jpg">
 </p>
-
+Balanceamento
 ```
-corrplot(data_cor, method = 'color')
+df_train <- SMOTE_NC(df_train, 'credit.rating', perc_maj = 100, k = 5)
 ```
-
 <p align="center">
-  <img src="Imagens/IMG4.jpeg" width="400" height="400">
+<i>Histograma variável "credit.rating após o balanceamento</i>
+</p>
+<p align="center">
+  <img src="Imagens/IMG06.jpg">
 </p>
 
-<td><p align=justify>Como podemos observar, existe correlação entre a variável "gastos" e as demais variáveis, sendo a correlação com a variável "fumante" a mais forte. <b>Isso confirma a hipótese inicial de que algumas características dos segurados podem influenciar em seu gasto anual com despesas médicas.</b></p></td>
+<td><p align=justify>Como podemos observar pelo histograma da variável "credit.rating", existia uma grande diferença entre o númeto de créditos concedidos ("1") e os não concedidos ("0"), o processo de balanceamento (SMOTE) corrigiu tal discrepância entre os dados, o que possibilitará um melhor aprendizado para o modelo a ser construído nas próximas etapas deste projeto.</b></p></td>
 
 ## :rocket: Solução do Problema
 <td><p align=justify>Uma vez que concluímos as etapas de exploração dos dados e pré-processamento, confirmando ainda nossa hipótese inicial de que há correlação entre os atributos dos segurados e o seu gasto anual com despesas médicas, buscaremos agora uma solução para o problema inicialmente proposto: <b>estimar as despesas médias dos segurados com base nos seus atributos</b>. Para isso ocorrer, entendemos como necessária a construção de um modelo preditivo, neste caso utilizaremos a <b>Regressão Linear</b> para estimar os valores.</p></td>
