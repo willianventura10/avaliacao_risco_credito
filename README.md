@@ -90,22 +90,21 @@ df_train <- df[indexes,]
 df_test <- df[-indexes,]
 ```
 ### Tabela de Contingência e Balanceamento dos dados de treino 
-
-<p align="center">
-<i>Histograma variável "credit.rating antes do balanceamento</i>
-</p>
-<p align="center">
-  <img src="Imagens/IMG05.jpg">
-</p>
 Balanceamento
 ```
 df_train <- SMOTE_NC(df_train, 'credit.rating', perc_maj = 100, k = 5)
 ```
 <p align="center">
-<i>Histograma variável "credit.rating após o balanceamento</i>
+<i>Histograma da variável "credit.rating antes do balanceamento</i>
 </p>
 <p align="center">
-  <img src="Imagens/IMG06.jpg">
+  <img src="Imagens/IMG05.jpg" width="550" height="475">
+</p>
+<p align="center">
+<i>Histograma da variável "credit.rating após o balanceamento</i>
+</p>
+<p align="center">
+  <img src="Imagens/IMG06_.jpg" width="550" height="475">
 </p>
 
 <td><p align=justify>Como podemos observar pelo histograma da variável "credit.rating", existia uma grande diferença entre o númeto de créditos concedidos ("1") e os não concedidos ("0"), o processo de balanceamento (SMOTE) corrigiu tal discrepância entre os dados, o que possibilitará um melhor aprendizado para o modelo a ser construído nas próximas etapas deste projeto.</b></p></td>
