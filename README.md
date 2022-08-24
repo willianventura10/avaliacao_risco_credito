@@ -89,7 +89,7 @@ indexes <- sample(1:nrow(df), size = 0.6 * nrow(df))
 df_train <- df[indexes,]
 df_test <- df[-indexes,]
 ```
-### Tabela de Contingência e Balanceamento dos dados de treino 
+### Balanceamento dos dados de treino 
 Balanceamento
 ```
 df_train <- SMOTE_NC(df_train, 'credit.rating', perc_maj = 100, k = 5)
