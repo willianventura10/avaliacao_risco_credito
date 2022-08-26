@@ -24,7 +24,7 @@
 
 ## :gear: Descrição Geral do Problema
 <td><p align=justify>Como forma de reduzir o risco na concessão de crédito, os bancos e instituições financeiras estão sempre gerando melhorias em seus processos de
-análise de crédito, nesse sentindo, entendemos como necessária a construção de modelos preditivos capazes de avaliar se um cliente conseguirá ou não pagar por um crédito concedido.</p></td>
+análise de crédito, nesse sentindo, entendemos como necessário o desenvolvimento de soluções capazes de avaliar se um cliente conseguirá ou não pagar por um empréstimo.</p></td>
 
 ## :mag: Familiarizando-se com o Dataset
 <td><p align=justify>Para o desenvolvimento do Projeto foram utilizados dados fictícios de 1000 clientes de uma instituição financeira, considerando as seguintes caracterísicas: classificação de crédito, saldo da conta, meses de duração do crédito, status de pagamento de crédito anterior, finalidade do crédito, quantia do crédito, poupança, duração do emprego, taxa de parcelamento, estado civil, fiador, duração da residência, ativo circulante, idade, outros créditos, tipo de apartamento, créditos bancários, ocupação, dependentes, telefone, trabalhador estrangeiro.</p></td>
@@ -107,10 +107,10 @@ df_train <- SMOTE_NC(df_train, 'credit.rating', perc_maj = 100, k = 5)
   <img src="Imagens/IMG06_.jpg" width="550" height="475">
 </p>
 
-<td><p align=justify>Como podemos observar pelo histograma da variável "credit.rating", existia uma grande diferença entre o númeto de créditos concedidos ("1") e os não concedidos ("0"), o processo de balanceamento (SMOTE) corrigiu tal discrepância entre os dados, o que possibilitará um melhor aprendizado para o modelo a ser construído nas próximas etapas deste projeto.</b></p></td>
+<td><p align=justify>Como podemos observar pelo histograma da variável "credit.rating", existia uma grande diferença entre o númeto de créditos concedidos ("1") e os não concedidos ("0"), o processo de balanceamento (oversampling) corrigiu tal discrepância entre os dados, o que possibilitará um melhor aprendizado para o modelo a ser construído nas próximas etapas deste projeto.</b></p></td>
 
 ## :rocket: Solução do Problema
-<td><p align=justify>Uma vez que concluímos as etapas de exploração dos dados e pré-processamento, confirmando ainda nossa hipótese inicial de que há correlação entre os atributos dos segurados e o seu gasto anual com despesas médicas, buscaremos agora uma solução para o problema inicialmente proposto: <b>estimar as despesas médias dos segurados com base nos seus atributos</b>. Para isso ocorrer, entendemos como necessária a construção de um modelo preditivo, neste caso utilizaremos a <b>Regressão Linear</b> para estimar os valores.</p></td>
+<td><p align=justify>Uma vez que concluímos as etapas de exploração dos dados e pré-processamento, buscaremos agora uma solução para o problema inicialmente proposto: <b>Desenvolver uma solução capaz de avaliar se um cliente conseguirá ou não pagar por um empréstimo</b>. Para isso ocorrer, entendemos como necessária a construção de um modelo preditivo de classificação, neste caso desenvolveremos dois modelos, um do tipo <b>Random Forest</b> e outro de <b>Regressão Logística.</b></p></td>
 
 ### Construindo o Modelo 
 
