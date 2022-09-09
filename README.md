@@ -112,11 +112,14 @@ df_train <- SMOTE_NC(df_train, 'credit.rating', perc_maj = 100, k = 5)
 ## :rocket: Solução do Problema
 <td><p align=justify>Uma vez que concluímos as etapas de exploração dos dados e pré-processamento, buscaremos agora uma solução para o problema inicialmente proposto: <b>Desenvolver uma solução capaz de avaliar se um cliente conseguirá ou não pagar por um empréstimo</b>. Para isso ocorrer, entendemos como necessária a construção de um modelo preditivo de classificação, neste caso desenvolveremos dois modelos, um do tipo <b>Random Forest</b> e outro de <b>Regressão Logística.</b></p></td>
 
-### Construindo o Modelo 
+### Construindo o Modelo com Random Forest
 
-Criando as amostras de forma randômica
+Inicialmente serão utilizadas todas as variáveis para construção do Modelo e posteriormente será verificada a importância de cada uma delas
 ```
-amostra <- sample.split(df$idade, SplitRatio = 0.70)
+modelo_RF <- randomForest( credit.rating ~ .,
+                        data = df_train, 
+                        ntree = 100, nodesize = 10, importance = T)
+varImpPlot(modelo_RF)
 ```
 Criando dados de treino - 70% dos dados
 ```
