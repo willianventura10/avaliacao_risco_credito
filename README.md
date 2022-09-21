@@ -123,7 +123,7 @@ varImpPlot(modelo_RF)
 ```
 Verificando a relevância de cada variável para o modelo
 <p align="center">
-  <img src="Imagens/IMG08.jpg" width="500" height="300">
+  <img src="Imagens/IMG08.jpg" >
 </p>
 
 Podemos observar que algumas variáveis são mais relevantes do que outras para o desempenho do modelo, como saldo na conta, poupança, meses de duração do crédito, quantia do crédito, etc. Portanto, eliminaremos do nosso modelo algumas variáveis que entendemos ser menos relevantes.
@@ -144,22 +144,30 @@ modelo_RF <- randomForest( credit.rating ~ . -foreign.worker
 # Gerando Confusion Matrix com o Caret
 confusionMatrix(df_train$credit.rating, modelo_RF$predicted, positive = '1')
 ```
-Avaliando a 'Confusion Matrix' do modelo criado
+Avaliando a 'Confusion Matrix' com dados de treino
 <p align="center">
-  <img src="Imagens/IMG08.jpg" width="500" height="300">
+  <img src="Imagens/IMG09.jpg" height="375">
 </p>
 
 O modelo apresentou resultado considerado relativamente "bom" nas previsões com os dados de treino 
 
 ### Testando e Avaliando o Modelo 
 
-Fazendo as predições com os dados de teste
+Fazendo as predições com os dados de teste e gerando a 'Confusion Matrix'
 ```
-prevendo_gastos <- predict(modelo_v1, teste)
-resultados <- cbind(prevendo_gastos, teste$gastos) 
-colnames(resultados) <- c('Previsto','Real')
-resultados <- as.data.frame(resultados)
+# Gerando previsoes nos dados de teste
+result_previsto_RF <- data.frame( actual = df_test$credit.rating,
+                               previsto = predict(modelo_RF, newdata = df_test))
+                               
+# Gerando Confusion Matrix com o Caret
+confusionMatrix(result_previsto_RF$actual, result_previsto_RF$previsto, positive = '1')
 ```
+Avaliando a 'Confusion Matrix' com dados de teste
+<p align="center">
+  <img src="Imagens/IMG10.jpg" height="375">
+</p>
+PAREI AQUI, VER SE FALO DA CURVA ROC AQUI OU NO FINAL
+
 
 Tratando os valores negativos
 ```
