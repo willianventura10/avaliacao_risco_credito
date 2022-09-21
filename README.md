@@ -27,7 +27,7 @@
 análise de crédito, nesse sentindo, entendemos como necessário o desenvolvimento de soluções capazes de avaliar se um cliente conseguirá ou não pagar por um empréstimo.</p></td>
 
 ## :mag: Familiarizando-se com o Dataset
-<td><p align=justify>Para o desenvolvimento do Projeto foram utilizados dados fictícios de 1000 clientes de uma instituição financeira, considerando as seguintes caracterísicas: classificação de crédito, saldo da conta, meses de duração do crédito, status de pagamento de crédito anterior, finalidade do crédito, quantia do crédito, poupança, duração do emprego, taxa de parcelamento, estado civil, fiador, duração da residência, ativo circulante, idade, outros créditos, tipo de apartamento, créditos bancários, ocupação, dependentes, telefone, trabalhador estrangeiro.</p></td>
+<td><p align=justify>Para o desenvolvimento do Projeto foram utilizados dados fictícios de 1000 clientes de uma instituição financeira, considerando as seguintes caracterísicas: classificação de crédito, saldo da conta, meses de duração do crédito, status de pagamento de crédito anterior, finalidade do crédito, quantia do crédito, poupança, duração do emprego, taxa de parcelamento, estado civil, fiador, duração da residência, ativo circulante, idade, outros créditos, tipo de apartamento, créditos bancários, ocupação, dependentes, telefone e se é trabalhador estrangeiro.</p></td>
 
 ### Carregando bibliotecas e dataset
 ```
@@ -107,7 +107,7 @@ df_train <- SMOTE_NC(df_train, 'credit.rating', perc_maj = 100, k = 5)
   <img src="Imagens/IMG06_.jpg" width="550" height="475">
 </p>
 
-<td><p align=justify>Como podemos observar pelo histograma da variável "credit.rating", existia uma grande diferença entre o númeto de créditos concedidos ("1") e os não concedidos ("0"), o processo de balanceamento (oversampling) corrigiu tal discrepância entre os dados, o que possibilitará um melhor aprendizado para o modelo a ser construído nas próximas etapas deste projeto.</b></p></td>
+<td><p align=justify>Como podemos observar pelo histograma da variável "credit.rating", existia uma grande diferença entre o número de créditos concedidos ("1") e os não concedidos ("0"), o processo de balanceamento (oversampling) corrigiu tal discrepância entre os dados, o que possibilitará um melhor aprendizado para o modelo a ser construído nas próximas etapas deste projeto.</b></p></td>
 
 ## :rocket: Solução do Problema
 <td><p align=justify>Uma vez que concluímos as etapas de exploração dos dados e pré-processamento, buscaremos agora uma solução para o problema inicialmente proposto: <b>Desenvolver uma solução capaz de avaliar se um cliente conseguirá ou não pagar por um empréstimo</b>. Para isso ocorrer, entendemos como necessária a construção de um modelo preditivo de classificação, neste caso desenvolveremos dois modelos, um do tipo <b>Random Forest</b> e outro de <b>Regressão Logística.</b></p></td>
@@ -121,45 +121,37 @@ modelo_RF <- randomForest( credit.rating ~ .,
                         ntree = 100, nodesize = 10, importance = T)
 varImpPlot(modelo_RF)
 ```
-Criando dados de treino - 70% dos dados
-```
-treino = subset(df, amostra == TRUE)
-```
-Criando dados de teste - 30% dos dados
-```
-teste = subset(df, amostra == FALSE)
-```
-Gerando o Modelo com dados de treino (usando todos os atributos)
-```
-modelo_v1 <- lm(gastos ~ ., data = treino)
-```
-
-Podemos observar que o modelo criado apresenta bom desempenho utilizando os dados de treino (tomando como parâmetro o R-squared).
-
+Verificando a relevância de cada variável para o modelo
 <p align="center">
-  <img src="Imagens/IMG7.jpeg" width="500" height="300">
+  <img src="Imagens/IMG08.jpg" width="500" height="300">
 </p>
 
-Obtendo os resíduos (diferença entre os valores observados de uma variável e seus valores previstos)
-```
-res <- residuals(modelo_v1)
-res <- as.data.frame(res)
-```
+Podemos observar que algumas variáveis são mais relevantes do que outras para o desempenho do modelo, como saldo na conta, poupança, meses de duração do crédito, quantia do crédito, etc. Portanto, eliminaremos do nosso modelo algumas variáveis que entendemos ser menos relevantes.
 
-Histograma dos resíduos
 ```
-ggplot(res, aes(res)) +  
-  geom_histogram(bins = 20, 
-                 alpha = 0.5, fill = 'blue')
+modelo_RF <- randomForest( credit.rating ~ . -foreign.worker
+                        -dependents
+                        -other.credits
+                        -occupation
+                        -bank.credits
+                        -apartment.type
+                        -telephone
+                        -marital.status
+                        -guarantor,
+                        data = df_train, 
+                        ntree = 100, nodesize = 10, importance = T)
+                        
+# Gerando Confusion Matrix com o Caret
+confusionMatrix(df_train$credit.rating, modelo_RF$predicted, positive = '1')
 ```
-
+Avaliando a 'Confusion Matrix' do modelo criado
 <p align="center">
-  <img src="Imagens/IMG8.jpeg" width="600" height="300">
+  <img src="Imagens/IMG08.jpg" width="500" height="300">
 </p>
 
-<td><p align=justify>O Histograma acima nos mostra uma distribuicao normal, o que indica que a média entre os valores previstos e os valores observados é proximo de zero, o que é muito bom!</p></td>
+O modelo apresentou resultado considerado relativamente "bom" nas previsões com os dados de treino 
 
-### Testando e avaliando o Modelo 
+### Testando e Avaliando o Modelo 
 
 Fazendo as predições com os dados de teste
 ```
