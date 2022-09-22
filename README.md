@@ -98,7 +98,7 @@ df_train <- SMOTE_NC(df_train, 'credit.rating', perc_maj = 100, k = 5)
 <i>Histograma da variável "credit.rating antes do balanceamento</i>
 </p>
 <p align="center">
-  <img src="Imagens/IMG05.jpg" width="550" height="475">
+  <img src="Imagens/IMG05_.jpg" width="550" height="475">
 </p>
 <p align="center">
 <i>Histograma da variável "credit.rating após o balanceamento</i>
