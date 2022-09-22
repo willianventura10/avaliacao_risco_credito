@@ -144,7 +144,7 @@ modelo_RF <- randomForest( credit.rating ~ . -foreign.worker
 # Gerando Confusion Matrix com o Caret
 confusionMatrix(df_train$credit.rating, modelo_RF$predicted, positive = '1')
 ```
-Avaliando a 'Confusion Matrix' com dados de treino
+'Confusion Matrix' com dados de treino
 <p align="center">
   <img src="Imagens/IMG09.jpg" height="375">
 </p>
@@ -162,10 +162,29 @@ result_previsto_RF <- data.frame( actual = df_test$credit.rating,
 # Gerando Confusion Matrix com o Caret
 confusionMatrix(result_previsto_RF$actual, result_previsto_RF$previsto, positive = '1')
 ```
-Avaliando a 'Confusion Matrix' com dados de teste
+'Confusion Matrix' com dados de teste
 <p align="center">
   <img src="Imagens/IMG10.jpg" height="375">
 </p>
+
+Gerando a curva 'ROC' e valor da 'AUC'
+```
+# Gerando a curva ROC e valor da AUC
+auc_RF <- performance(pred_RF, "auc")
+auc_RF <- auc_RF@y.values
+auc_RF <- auc_RF[[1]]
+auc_RF <- round(auc_RF,2)
+pred_RF <- prediction(class1_RF[,2], class2_RF)
+perf_RF <- performance(pred_RF, "tpr","fpr") 
+plot(perf_RF, col = rainbow(10),main=paste("Curva ROC","\n","AUC=",auc_RF))
+```
+Curva 'ROC' e valor da 'AUC'
+<p align="center">
+  <img src="Imagens/IMG11.jpg" height="375">
+</p>
+
+
+
 PAREI AQUI, VER SE FALO DA CURVA ROC AQUI OU NO FINAL
 
 
