@@ -112,7 +112,7 @@ df_train <- SMOTE_NC(df_train, 'credit.rating', perc_maj = 100, k = 5)
 ## :rocket: Solução do Problema
 <td><p align=justify>Uma vez que concluímos as etapas de exploração dos dados e pré-processamento, buscaremos agora uma solução para o problema inicialmente proposto: <b>Desenvolver uma solução capaz de avaliar se um cliente conseguirá ou não pagar por um empréstimo</b>. Para isso ocorrer, entendemos como necessária a construção de um modelo preditivo de classificação, neste caso desenvolveremos dois modelos, um do tipo <b>Random Forest</b> e outro de <b>Regressão Logística.</b></p></td>
 
-### Construindo o Modelo com Random Forest
+### Construindo Modelo de 'Random Forest'
 
 Inicialmente serão utilizadas todas as variáveis para construção do Modelo e posteriormente será verificada a importância de cada uma delas
 ```
@@ -151,7 +151,7 @@ confusionMatrix(df_train$credit.rating, modelo_RF$predicted, positive = '1')
 
 O modelo apresentou resultado considerado relativamente "bom" nas previsões com os dados de treino 
 
-### Testando e Avaliando o Modelo 
+### Testando e Avaliando o Modelo de 'Random Forest'
 
 Fazendo as predições com os dados de teste e gerando a 'Confusion Matrix'
 ```
@@ -169,13 +169,17 @@ confusionMatrix(result_previsto_RF$actual, result_previsto_RF$previsto, positive
 
 Gerando a curva 'ROC' e valor da 'AUC'
 ```
+# Gerando as classes de dados
+class1_RF <- predict(modelo_RF, newdata = df_test, type = 'prob')
+class2_RF <- df_test$credit.rating
+
 # Gerando a curva ROC e valor da AUC
+pred_RF <- prediction(class1_RF[,2], class2_RF)
+perf_RF <- performance(pred_RF, "tpr","fpr") 
 auc_RF <- performance(pred_RF, "auc")
 auc_RF <- auc_RF@y.values
 auc_RF <- auc_RF[[1]]
 auc_RF <- round(auc_RF,2)
-pred_RF <- prediction(class1_RF[,2], class2_RF)
-perf_RF <- performance(pred_RF, "tpr","fpr") 
 plot(perf_RF, col = rainbow(10),main=paste("Curva ROC","\n","AUC=",auc_RF))
 ```
 Curva 'ROC' e valor da 'AUC'
@@ -183,9 +187,76 @@ Curva 'ROC' e valor da 'AUC'
   <img src="Imagens/IMG11.jpg" height="375">
 </p>
 
+Analisando a Curva 'ROC' e o valor de 'AUC', podemos concluir que o Modelo de 'Random Forest' apresentou um bom desempenho, desmonstrando ser uma boa opção para solução do problema proposto. 
+
+### Construindo Modelo de 'Regressão Logística'
+
+Para o Modelo de 'Regressão Logística' utilizaremos as mesmas variáveis utilizadas no Modelo 'Random Forest'
+```
+modelo_RL <- glm(credit.rating ~ . -foreign.worker
+                -dependents
+                -other.credits
+                -occupation
+                -bank.credits
+                -apartment.type
+                -telephone
+                -marital.status
+                -guarantor, 
+                data = df_train, family = "binomial")
+               
+# Visualizando o modelo
+summary(modelo_RL)
+
+# Gerando Confusion Matrix com o Caret
+confusionMatrix(df_train$credit.rating, as.factor(round(modelo_RL$fitted.values)), positive = '1')
+```
+'Confusion Matrix' com dados de treino
+<p align="center">
+  <img src="Imagens/IMG12.jpg" height="375">
+</p>
+
+Assim como no Modelo de 'Random Forest', o Modelo de 'Regressão Logística' também apresentou resultado considerado bom nas previsões com os dados de treino. 
+
+### Testando e Avaliando o Modelo de 'Regressão Logística'
+
+Fazendo as predições com os dados de teste e gerando a 'Confusion Matrix'
+```
+# Gerando previsoes nos dados de teste
+result_previsto_RL <- data.frame( actual = df_test$credit.rating,
+                                  previsto = as.factor(round(predict(modelo_RL, newdata = df_test, type = 'response'))))
+
+# Gerando Confusion Matrix com o Caret
+confusionMatrix(result_previsto_RL$actual, result_previsto_RL$previsto, positive = '1')
+```
+'Confusion Matrix' com dados de teste
+<p align="center">
+  <img src="Imagens/IMG13.jpg" height="375">
+</p>
+
+Gerando a curva 'ROC' e valor da 'AUC'
+```
+# Gerando as classes de dados
+class1_RL <- predict(modelo_RL, newdata = df_test, type = 'response')
+class2_RL <- df_test$credit.rating
+
+# Gerando a curva ROC
+pred_RL <- prediction(class1_RL, class2_RL)
+perf_RL <- performance(pred_RL, "tpr","fpr") 
+auc_RL <- performance(pred_RL, "auc")
+auc_RL <- auc_RL@y.values
+auc_RL <- auc_RL[[1]]
+auc_RL <- round(auc_RL,2)
+plot(perf_RL,col = rainbow(10),main=paste("Curva ROC","\n","AUC=",auc_RL))
+```
+Curva 'ROC' e valor da 'AUC'
+<p align="center">
+  <img src="Imagens/IMG14.jpg" height="375">
+</p>
+
+Analisando a Curva 'ROC' e o valor de 'AUC', podemos concluir que o Modelo de 'Regressão Logística' apresentou um bom desempenho, desmonstrando também ser uma boa opção para solução do problema proposto. 
 
 
-PAREI AQUI, VER SE FALO DA CURVA ROC AQUI OU NO FINAL
+PAREI AQUI!COMPARAR MODELOS E REVISAR IMAGENS FAZENDO A EXECUÇÃO DO SCRIPT DE UMA ÚNICA VEZ PARA OS DOIS ALGORITMOS (PARA OS DOIS USAREM OS MESMOS DADOS)
 
 
 Tratando os valores negativos
