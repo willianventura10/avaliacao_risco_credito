@@ -11,12 +11,14 @@
   * [Carregando bibliotecas e dataset](#carregando-bibliotecas-e-dataset)
   * [Exploração inicial dos dados](#exploração-inicial-dos-dados)
   * [Pré-Processamento](#pré-processamento)
-  * [Análise da Correlação entre as variáveis](#análise-da-correlação-entre-as-variáveis)
+  * [Balanceamento dos dados de treino](#balanceamento-dos-dados-de-treino )
 * [Solução do Problema](#rocket-solução-do-problema)
-  * [Construindo o Modelo](#construindo-o-modelo)
-  * [Testando e avaliando o Modelo](#testando-e-avaliando-o-modelo)
-  * [Otimizando o Modelo](#otimizando-o-modelo)
- * [Conclusão e Considerações Finais](#bulb-conclusão-e-considerações-finais)
+  * [Construindo Modelo de 'Random Forest'](#construindo-modelo-de-random-forest)
+  * [Testando e Avaliando o Modelo de 'Random Forest'](#testando-e-avaliando-o-modelo-de-random-forest)
+  * [Construindo Modelo de 'Regressão Logística'](#construindo-modelo-de-regressão-logística)
+  * [Testando e Avaliando o Modelo de 'Regressão Logística'](#testando-e-avaliando-o-modelo-de-regressão-logística)
+  * [Comparando Modelos](#comparando-modelos)
+* [Conclusão e Considerações Finais](#bulb-conclusão-e-considerações-finais)
 * [Autor](#superhero-autor)
 
 ## :computer: Sobre o Projeto
@@ -83,9 +85,9 @@ scale.features <- function(df, variables){
 numeric.vars <- c("credit.duration.months", "age", "credit.amount")
 df <- scale.features(df, numeric.vars)
 ```
-Split dos dados (60% para dados de treino e 40% para dados de teste)
+Split dos dados (70% para dados de treino e 30% para dados de teste)
 ```
-indexes <- sample(1:nrow(df), size = 0.6 * nrow(df))
+indexes <- sample(1:nrow(df), size = 0.7 * nrow(df))
 df_train <- df[indexes,]
 df_test <- df[-indexes,]
 ```
@@ -250,97 +252,32 @@ plot(perf_RL,col = rainbow(10),main=paste("Curva ROC","\n","AUC=",auc_RL))
 ```
 Curva 'ROC' e valor da 'AUC'
 <p align="center">
-  <img src="Imagens/IMG14.jpg" height="375">
+  <img src="Imagens/IMG14.jpg">
 </p>
 
 Analisando a Curva 'ROC' e o valor de 'AUC', podemos concluir que o Modelo de 'Regressão Logística' apresentou um bom desempenho, desmonstrando também ser uma boa opção para solução do problema proposto. 
 
-
-PAREI AQUI!COMPARAR MODELOS E REVISAR IMAGENS FAZENDO A EXECUÇÃO DO SCRIPT DE UMA ÚNICA VEZ PARA OS DOIS ALGORITMOS (PARA OS DOIS USAREM OS MESMOS DADOS)
-
-
-Tratando os valores negativos
+### Comparando Modelos
+Comparando curvas 'ROC' e valor da 'AUC' dos dois modelos
 ```
-trata_zero <- function(x){
-  if  (x < 0){
-    return(0)
-  }else{
-    return(x)
-  }
-}
-resultados$Previsto <- sapply(resultados$Previsto, trata_zero)
+#Comparando modelos (biblioteca pROC)
+roc_RL <- roc(class2_RL , class1_RL, percent = TRUE)
+roc_RF <- roc(class2_RF , class1_RF[,2], percent = TRUE)
+par(pty = "s")
+plot(roc_RL, print.auc = TRUE, col = "blue", main = "Curva ROC - Random Forest (Green) x Regressão Logística (Blue)", legacy.axes = TRUE, 
+     xlab = "% de Falso Positivo (100 - Especificidade)",
+     ylab = "% de Verdadeiro Positivo (Sensibilidade)")
+plot(roc_RF, print.auc = TRUE, col = "green", print.auc.y = 40, add = TRUE, legacy.axes = TRUE)
 ```
-
-Cálculo da raiz quadrada do erro quadrático médio
-```
-mse <- mean((resultados$Real - resultados$Previsto)^2)
-rmse <- mse^0.5
-```
-
-Cálculo do R-squared (O R² ajuda a avaliar o nivel de precisão do modelo, quanto maior, melhor, sendo 1 o valor ideal)
-```
-SSE = sum((resultados$Previsto - resultados$Real)^2)
-SST = sum( (mean(df$gastos) - resultados$Real)^2)
-R2 = 1 - (SSE/SST)
-```
-
 <p align="center">
-  <img src="Imagens/IMG9.jpeg">
+  <img src="Imagens/IMG15.jpg">
 </p>
 
-<td><p align=justify>Analisando as métricas calculadas acima, <b>concluímos que o modelo apresenta bom desempenho nas predições</b>. No entanto, é importante sempre avaliar se a performance apresentada pode ser melhorada, é o que faremos na próxima etapa do projeto!</p></td>
-
-### Otimizando o Modelo
-
-<td><p align=justify>Nesta etapa tentaremos otimizar a performance do Modelo construído. Antes de efetuar qualquer alteração, precisamos analisar alguns pontos importantes referentes às nossas variáveis preditoras (atributos dos segurados).</p></td>
-
-<td><p align=justify>1 - Idade: É notório que os gastos com saúde tendem a aumentar de maneira desproporcional para a população mais velha. Logo, é interessante acrescentar uma variável que nos permita separar o impacto linear e não linear da idade nos gastos. Isso pode ser feito criando a variável 'idade²' (idade ao quadrado).</p></td>
-
-<td><p align=justify>2 - Índice de massa corporal (BMI): Outra observação a ser feita é com relação às pessoas obesas (BMI >= 30), a obesidade pode ser um preditor importante para os gastos com saúde, uma vez que as pessoas obesas tendem a desenvolver mais doenças. Neste caso podemos acrescentar uma variável 'bmi30' que indique se o segurado é obeso ou não (1 ou 0).</p></td>
-
-<td><p align=justify>3 - Uma vez que criamos a variável 'bmi30' que indica se o segurado é obeso ou não, e considerando que a variável 'fumante' é um forte preditor dos gastos (conforme análise da matriz de correlação na seção 'Familiarizando-se com o Dataset') podemos criar uma outra variável (cujo nome será 'fbmi30') que contemple os segurados que são obesos e ao mesmo tempo fumantes. Neste caso 'fbmi30' = bmi30*fumante, onde '1' indicará se as duas condições estão presentes e '0' se uma ou nenhuma das condições está presente.</p></td>
-
-Acrescentando variáveis 'idade2', 'bmi30' e 'fbmi30' aos dados de treino e teste
-```
-treino$idade2 <- (treino$idade)^2
-teste$idade2 <- (teste$idade)^2
-treino$bmi30 <- ifelse(treino$bmi >= 30, 1, 0)
-teste$bmi30 <- ifelse(teste$bmi >= 30, 1, 0)
-treino$fbmi30 <-treino$bmi30*treino$fumante
-teste$fbmi30 <-teste$bmi30*teste$fumante
-```
-
-Criando Modelo Otimizado
-```
-modelo_v2 <- lm(gastos ~ ., data = treino)
-```
-
-<p align="center">
-  <img src="Imagens/IMG10.jpeg" width="500" height="300">
-</p>
-
-Histograma dos resíduos
-```
-res2 <- residuals(modelo_v2)
-res2 <- as.data.frame(res2)
-ggplot(res2, aes(res2)) +  
-  geom_histogram(bins = 20, 
-                 alpha = 0.5, fill = 'blue')
-```
-
-<p align="center">
-  <img src="Imagens/IMG11.jpeg" width="600" height="300">
-</p>
-
-Após repetir os passos de testagem e avaliação do Modelo Otimizado obtemos novamente as métricas:
-
-![image](Imagens/IMG12.jpeg)
-
-<b>Como o podemos observar o Modelo Otimizado apresentou significativa melhora no desempenho das predições.</b>
+<td><p align=justify>Como pode ser facilmente observado na figura acima, os modelos desenvolvidos apresentam desempenhos muito parecidos, estando ambos aptos a serem a solução para o problema proposto!</p></td>
 
 ## :bulb: Conclusão e Considerações Finais
 
-<td><p align=justify>Após passar pelas etapas de exploração e pré-processamento dos dados, construção, treinamento e otimização do Modelo Preditivo, concluímos nosso trabalho e encontramos, através de um modelo de Regressão Linear, a solução para o problema proposto. As próximas etapas passariam pela entrega dos resultados às equipes responsáveis pelo desenvolvimento e implantação de um sistema que receba dados de novos segurados, e baseada no modelo preditivo proposto, devolva as previsões das despesas médicas em formato adequado. Tais informações seriam de extrema utilidade para os setores responsáveis pelo planejamento e gestão financeira da empresa. Obviamente que o modelo construído, mesmo otimizado, ainda passaria por ajustes finos e constantes melhorias, de modo a obter sempre o melhor desempenho.</p></td>
+<td><p align=justify>Após passar pelas etapas de exploração e pré-processamento dos dados, construção e treinamento dos Modelos Preditivos, concluímos nosso trabalho e encontramos, através dos Modelos de 'Random Forest' e 'Regressão Logística' , a solução para o problema proposto. As próximas etapas passariam pela entrega dos resultados às equipes responsáveis pelo desenvolvimento e implantação de um sistema que, baseado nos modelos preditivos propostos, receba os dados dos clientes e devolva as previsões das análises de crédito em formato adequado. Tais informações seriam de extrema utilidade para os setores responsáveis pelo planejamento e gestão financeira da empresa. Obviamente que os modelos construídos carecem de otimizações, devendo passar por ajustes finos e constantes melhorias, de modo a obter sempre o melhor desempenho.</p></td>
 
 ## :superhero: Autor
 <img src="https://avatars.githubusercontent.com/u/100307643?s=400&u=83c7fc83a58680d2adde544e8a5f3887de53f37a&v=4" height="100" width="100"> 
