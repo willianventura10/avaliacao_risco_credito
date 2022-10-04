@@ -17,12 +17,14 @@
   * [Testando e Avaliando o Modelo de 'Random Forest'](#testando-e-avaliando-o-modelo-de-random-forest)
   * [Construindo Modelo de 'Regressão Logística'](#construindo-modelo-de-regressão-logística)
   * [Testando e Avaliando o Modelo de 'Regressão Logística'](#testando-e-avaliando-o-modelo-de-regressão-logística)
+  * [Construindo Modelo de 'Naive Bayes'](#construindo-modelo-de-naive-bayes)
+  * [Testando e Avaliando o Modelo de 'Naive Bayes'](#testando-e-avaliando-o-modelo-de-naive-bayes)
   * [Comparando Modelos](#comparando-modelos)
 * [Conclusão e Considerações Finais](#bulb-conclusão-e-considerações-finais)
 * [Autor](#superhero-autor)
 
 ## :computer: Sobre o Projeto
-<td><p align=justify>O objetivo deste projeto é praticar o conhecimento adquirido em Machine Learning. Neste projeto foram construídos dois Modelos Preditivos de classificação (Random Forest e Regressão Logística) para prever se o crédito deve ser ou não concedido a determinado cliente de uma instituição financeira, dadas algumas características conhecidas. Para o desenvolvimento do projeto foi utilizada linguagem R (versão 4.2.0) juntamente com as bibliotecas 'ROCR' (versão 1.0-11), 'pROC' (versão 1.18.0), 'caret' (versão 6.0-92), 'randomForest' (versão 4.7-1.1) e 'RSBID' (versão 0.0.2.0000).</p></td>
+<td><p align=justify>O objetivo deste projeto é praticar o conhecimento adquirido em Machine Learning. Neste projeto foram construídos três Modelos Preditivos de classificação (Random Forest, Regressão Logística e Naive Bayes) para prever se o crédito deve ser ou não concedido a determinado cliente de uma instituição financeira, dadas algumas características conhecidas. Para o desenvolvimento do projeto foi utilizada linguagem R (versão 4.2.0) juntamente com as bibliotecas 'ROCR' (versão 1.0-11), 'pROC' (versão 1.18.0), 'caret' (versão 6.0-92), 'randomForest' (versão 4.7-1.1), 'RSBID' (versão 0.0.2.0000), 'ggplot2' (versão 3.3.6), 'gridExtra' (versão 2.3), e 'e1071' (versão 1.7-11).</p></td>
 
 ## :gear: Descrição Geral do Problema
 <td><p align=justify>Como forma de reduzir o risco na concessão de crédito, os bancos e instituições financeiras estão sempre gerando melhorias em seus processos de
@@ -36,8 +38,11 @@ análise de crédito, nesse sentindo, entendemos como necessário o desenvolvime
 library(RSBID)
 library(randomForest)
 library(ROCR)
-library(pROC)
 library(caret)
+library(pROC)
+library(ggplot2)
+library(gridExtra)
+library(e1071)
 ```
 ```
 df <- read.csv("credito.csv")
@@ -92,7 +97,6 @@ df_train <- df[indexes,]
 df_test <- df[-indexes,]
 ```
 ### Balanceamento dos dados de treino 
-Balanceamento
 ```
 df_train <- SMOTE_NC(df_train, 'credit.rating', perc_maj = 100, k = 5)
 ```
@@ -100,19 +104,19 @@ df_train <- SMOTE_NC(df_train, 'credit.rating', perc_maj = 100, k = 5)
 <i>Histograma da variável "credit.rating antes do balanceamento</i>
 </p>
 <p align="center">
-  <img src="Imagens/IMG05_.jpg" width="550" height="475">
+  <img src="Imagens/IMG05_2.jpg" width="550" height="475">
 </p>
 <p align="center">
 <i>Histograma da variável "credit.rating após o balanceamento</i>
 </p>
 <p align="center">
-  <img src="Imagens/IMG06_.jpg" width="550" height="475">
+  <img src="Imagens/IMG06_2.jpg" width="550" height="475">
 </p>
 
-<td><p align=justify>Como podemos observar pelo histograma da variável "credit.rating", existia uma grande diferença entre o número de créditos concedidos ("1") e os não concedidos ("0"), o processo de balanceamento (oversampling) corrigiu tal discrepância entre os dados, o que possibilitará um melhor aprendizado para o modelo a ser construído nas próximas etapas deste projeto.</b></p></td>
+<td><p align=justify>Como podemos observar pelo histograma da variável "credit.rating", existia uma grande diferença entre o número de créditos concedidos ("1") e os não concedidos ("0"), o processo de balanceamento (oversampling) corrigiu tal discrepância entre os dados, o que possibilitará um melhor aprendizado para os modelos a serem construídos nas próximas etapas deste projeto.</b></p></td>
 
 ## :rocket: Solução do Problema
-<td><p align=justify>Uma vez que concluímos as etapas de exploração dos dados e pré-processamento, buscaremos agora uma solução para o problema inicialmente proposto: <b>Desenvolver uma solução capaz de avaliar se um cliente conseguirá ou não pagar por um empréstimo</b>. Para isso ocorrer, entendemos como necessária a construção de um modelo preditivo de classificação, neste caso desenvolveremos dois modelos, um do tipo <b>Random Forest</b> e outro de <b>Regressão Logística.</b></p></td>
+<td><p align=justify>Uma vez que concluímos as etapas de exploração dos dados e pré-processamento, buscaremos agora uma solução para o problema inicialmente proposto: <b>Desenvolver uma solução capaz de avaliar se um cliente conseguirá ou não pagar por um empréstimo</b>. Para tanto, entendemos como necessária a construção de um modelo preditivo de classificação, neste caso desenvolveremos três modelos, um do tipo <b>Random Forest</b> outro de <b>Regressão Logística,</b> e ainda outro de <b>Naive Bayes.</b></p></td>
 
 ### Construindo Modelo de 'Random Forest'
 
@@ -148,7 +152,7 @@ confusionMatrix(df_train$credit.rating, modelo_RF$predicted, positive = '1')
 ```
 'Confusion Matrix' com dados de treino
 <p align="center">
-  <img src="Imagens/IMG09.jpg" height="375">
+  <img src="Imagens/IMG09_2.jpg" height="375">
 </p>
 
 O modelo apresentou resultado considerado relativamente "bom" nas previsões com os dados de treino 
@@ -166,7 +170,7 @@ confusionMatrix(result_previsto_RF$actual, result_previsto_RF$previsto, positive
 ```
 'Confusion Matrix' com dados de teste
 <p align="center">
-  <img src="Imagens/IMG10.jpg" height="375">
+  <img src="Imagens/IMG10_2.jpg" height="375">
 </p>
 
 Gerando a curva 'ROC' e valor da 'AUC'
@@ -181,12 +185,12 @@ perf_RF <- performance(pred_RF, "tpr","fpr")
 auc_RF <- performance(pred_RF, "auc")
 auc_RF <- auc_RF@y.values
 auc_RF <- auc_RF[[1]]
-auc_RF <- round(auc_RF,2)
+auc_RF <- round(auc_RF,3)
 plot(perf_RF, col = rainbow(10),main=paste("Curva ROC","\n","AUC=",auc_RF))
 ```
 Curva 'ROC' e valor da 'AUC'
 <p align="center">
-  <img src="Imagens/IMG11.jpg" height="375">
+  <img src="Imagens/IMG11_2.jpg" height="375">
 </p>
 
 Analisando a Curva 'ROC' e o valor de 'AUC', podemos concluir que o Modelo de 'Random Forest' apresentou um bom desempenho, desmonstrando ser uma boa opção para solução do problema proposto. 
@@ -214,7 +218,7 @@ confusionMatrix(df_train$credit.rating, as.factor(round(modelo_RL$fitted.values)
 ```
 'Confusion Matrix' com dados de treino
 <p align="center">
-  <img src="Imagens/IMG12.jpg" height="375">
+  <img src="Imagens/IMG12_2.jpg" height="375">
 </p>
 
 Assim como no Modelo de 'Random Forest', o Modelo de 'Regressão Logística' também apresentou resultado considerado bom nas previsões com os dados de treino. 
@@ -232,7 +236,7 @@ confusionMatrix(result_previsto_RL$actual, result_previsto_RL$previsto, positive
 ```
 'Confusion Matrix' com dados de teste
 <p align="center">
-  <img src="Imagens/IMG13.jpg" height="375">
+  <img src="Imagens/IMG13_2.jpg" height="375">
 </p>
 
 Gerando a curva 'ROC' e valor da 'AUC'
@@ -247,37 +251,94 @@ perf_RL <- performance(pred_RL, "tpr","fpr")
 auc_RL <- performance(pred_RL, "auc")
 auc_RL <- auc_RL@y.values
 auc_RL <- auc_RL[[1]]
-auc_RL <- round(auc_RL,2)
+auc_RL <- round(auc_RL,3)
 plot(perf_RL,col = rainbow(10),main=paste("Curva ROC","\n","AUC=",auc_RL))
 ```
 Curva 'ROC' e valor da 'AUC'
 <p align="center">
-  <img src="Imagens/IMG14.jpg">
+  <img src="Imagens/IMG14_2.jpg">
 </p>
 
 Analisando a Curva 'ROC' e o valor de 'AUC', podemos concluir que o Modelo de 'Regressão Logística' apresentou um bom desempenho, desmonstrando também ser uma boa opção para solução do problema proposto. 
 
+### Construindo Modelo de 'Naive Bayes'
+
+Para o Modelo de 'Naive Bayes' utilizaremos as mesmas variáveis utilizadas nos modelos anteriores.
+```
+modelo_NB <- naiveBayes( credit.rating ~ . -foreign.worker
+                         -dependents
+                         -other.credits
+                         -occupation
+                         -bank.credits
+                         -apartment.type
+                         -telephone
+                         -marital.status
+                         -guarantor,
+                         data = df_train)
+
+print(modelo_NB)
+```
+### Testando e Avaliando o Modelo de 'Naive Bayes'
+
+Fazendo as predições com os dados de teste e gerando a 'Confusion Matrix'
+```
+# Gerando previsoes nos dados de teste
+result_previsto_NB <- data.frame( atual = df_test$credit.rating,
+                                  previsto = predict(modelo_NB, df_test[,-1]))
+
+# Gerando Confusion Matrix com o Caret
+confusionMatrix(result_previsto_NB$atual, result_previsto_NB$previsto, positive = '1')
+```
+'Confusion Matrix' com dados de teste
+<p align="center">
+  <img src="Imagens/IMG15.jpg" height="375">
+</p>
+
+Gerando a curva 'ROC' e valor da 'AUC'
+```
+# Gerando as classes de dados
+class1_NB <- predict(modelo_NB, newdata = df_test[,-1],type = c("raw"))
+class2_NB <- df_test$credit.rating
+
+# Gerando a curva ROC e valor da AUC
+pred_NB <- prediction(class1_NB[,2], class2_NB)
+perf_NB <- performance(pred_NB, "tpr","fpr") 
+auc_NB <- performance(pred_NB, "auc")
+auc_NB <- auc_NB@y.values
+auc_NB <- auc_NB[[1]]
+auc_NB <- round(auc_NB,3)
+plot(perf_NB, col = rainbow(10),main=paste("Curva ROC","\n","AUC=",auc_NB))
+```
+Curva 'ROC' e valor da 'AUC'
+<p align="center">
+  <img src="Imagens/IMG16.jpg">
+</p>
+
+Analisando a Curva 'ROC' e o valor de 'AUC', observamos que o Modelo de 'Naive Bayes' apresentou desempenho muito parecido com os modelos anteriores, demonstrando também ser uma boa opção. 
+
 ### Comparando Modelos
-Comparando curvas 'ROC' e valor da 'AUC' dos dois modelos
+Comparando curvas 'ROC' e valor da 'AUC' dos modelos
 ```
 #Comparando modelos (biblioteca pROC)
 roc_RL <- roc(class2_RL , class1_RL, percent = TRUE)
 roc_RF <- roc(class2_RF , class1_RF[,2], percent = TRUE)
+roc_NB <- roc(class2_NB , class1_NB[,2], percent = TRUE)
 par(pty = "s")
-plot(roc_RL, print.auc = TRUE, col = "blue", main = "Curva ROC - Random Forest (Green) x Regressão Logística (Blue)", legacy.axes = TRUE, 
+plot(roc_RL, print.auc = TRUE, col = "blue", main=paste("Random F. (Green) x Regressão Log. (Blue) x Naive Bayes (Orange)"), legacy.axes = TRUE, 
      xlab = "% de Falso Positivo (100 - Especificidade)",
      ylab = "% de Verdadeiro Positivo (Sensibilidade)")
 plot(roc_RF, print.auc = TRUE, col = "green", print.auc.y = 40, add = TRUE, legacy.axes = TRUE)
+plot(roc_NB, print.auc = TRUE, col = "orange", print.auc.y = 30, add = TRUE, legacy.axes = TRUE)
 ```
 <p align="center">
-  <img src="Imagens/IMG15.jpg">
+  <img src="Imagens/IMG17.jpg">
 </p>
 
-<td><p align=justify>Como pode ser facilmente observado na figura acima, os modelos desenvolvidos apresentam desempenhos muito parecidos, estando ambos aptos a serem a solução para o problema proposto!</p></td>
+<td><p align=justify>Como pode ser facilmente observado na figura acima, os modelos desenvolvidos apresentam desempenhos muito parecidos, estando todos aptos a serem solução para o problema proposto!</p></td>
 
 ## :bulb: Conclusão e Considerações Finais
 
-<td><p align=justify>Após passar pelas etapas de exploração e pré-processamento dos dados, construção e treinamento dos Modelos Preditivos, concluímos nosso trabalho e encontramos, através dos Modelos de 'Random Forest' e 'Regressão Logística' , a solução para o problema proposto. As próximas etapas passariam pela entrega dos resultados às equipes responsáveis pelo desenvolvimento e implantação de um sistema que, baseado nos modelos preditivos propostos, receba os dados dos clientes e devolva as previsões das análises de crédito em formato adequado. Tais informações seriam de extrema utilidade para os setores responsáveis pelo planejamento e gestão financeira da empresa. Obviamente que os modelos construídos carecem de otimizações, devendo passar por ajustes finos e constantes melhorias, de modo a obter sempre o melhor desempenho.</p></td>
+<td><p align=justify>Após passar pelas etapas de exploração e pré-processamento dos dados, construção e treinamento dos Modelos Preditivos, concluímos nosso trabalho e encontramos, através dos Modelos de 'Random Forest', 'Regressão Logística' e 'Naive Bayes', possíveis soluções para o problema apresentado. As próximas etapas passariam pela entrega dos resultados às equipes responsáveis pelo desenvolvimento e implantação de um sistema que, baseado nos modelos preditivos propostos, receba os dados dos clientes e devolva as previsões das análises de crédito em formato adequado. Tais informações seriam de extrema utilidade para os setores responsáveis pelo planejamento e gestão financeira da empresa. Obviamente que os modelos construídos carecem de otimizações, devendo passar por mais testes, ajustes finos e constantes melhorias, de modo a obter sempre o melhor desempenho.</p></td>
 
 ## :superhero: Autor
 <img src="https://avatars.githubusercontent.com/u/100307643?s=400&u=83c7fc83a58680d2adde544e8a5f3887de53f37a&v=4" height="100" width="100"> 
