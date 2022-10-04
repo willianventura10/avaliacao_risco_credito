@@ -1,4 +1,4 @@
-<h1 align="middle">Análise de Crédito </h1>
+<h1 align="middle">Análise de Risco de Crédito </h1>
 
 <p align="center">
   <img src="Imagens/IMG01.jpg">
