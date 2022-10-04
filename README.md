@@ -1,4 +1,4 @@
-<h1 align="middle">Prevendo se o crédito deve ser ou não concedido. </h1>
+<h1 align="middle">Análise de Crédito </h1>
 
 <p align="center">
   <img src="Imagens/IMG01.jpg">
@@ -190,10 +190,11 @@ plot(perf_RF, col = rainbow(10),main=paste("Curva ROC","\n","AUC=",auc_RF))
 ```
 Curva 'ROC' e valor da 'AUC'
 <p align="center">
-  <img src="Imagens/IMG11_2.jpg" height="375">
+  <img src="Imagens/IMG11_2.jpg" width="700" height="500">
 </p>
 
-Analisando a Curva 'ROC' e o valor de 'AUC', podemos concluir que o Modelo de 'Random Forest' apresentou um bom desempenho, desmonstrando ser uma boa opção para solução do problema proposto. 
+<td><p align=justify>Analisando a Curva 'ROC' e o valor de 'AUC', podemos concluir que o Modelo de 'Random Forest' apresentou um bom desempenho, desmonstrando ser uma boa opção para solução do problema proposto.</b></p></td>
+
 
 ### Construindo Modelo de 'Regressão Logística'
 
@@ -256,7 +257,7 @@ plot(perf_RL,col = rainbow(10),main=paste("Curva ROC","\n","AUC=",auc_RL))
 ```
 Curva 'ROC' e valor da 'AUC'
 <p align="center">
-  <img src="Imagens/IMG14_2.jpg">
+  <img src="Imagens/IMG14_2.jpg" width="700" height="500">
 </p>
 
 Analisando a Curva 'ROC' e o valor de 'AUC', podemos concluir que o Modelo de 'Regressão Logística' apresentou um bom desempenho, desmonstrando também ser uma boa opção para solução do problema proposto. 
@@ -311,7 +312,7 @@ plot(perf_NB, col = rainbow(10),main=paste("Curva ROC","\n","AUC=",auc_NB))
 ```
 Curva 'ROC' e valor da 'AUC'
 <p align="center">
-  <img src="Imagens/IMG16.jpg">
+  <img src="Imagens/IMG16.jpg" width="700" height="500">
 </p>
 
 Analisando a Curva 'ROC' e o valor de 'AUC', observamos que o Modelo de 'Naive Bayes' apresentou desempenho muito parecido com os modelos anteriores, demonstrando também ser uma boa opção. 
